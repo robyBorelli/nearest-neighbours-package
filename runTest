@@ -1,0 +1,252 @@
+red=`tput setaf 1`; green=`tput setaf 2`; purple=`tput setaf 125`; reset=`tput sgr0`
+i=0;t=0
+prefix="./test/unit-tests/"
+prefixSingleNeighbour="single-neighbour/"
+prefixMultiNeighbors="multi-neighbors/"
+declare -a lineTest=("t4.txt" "t5.txt" "t6.txt" "t16.txt" "t17.txt" "t18.txt" "t19.txt")
+declare -a squareTest=("t1.txt" "t7.txt" "t8.txt" "t9.txt")
+declare -a genericTest=("t1.txt" "t2.txt" "t3.txt" "t4.txt" "t8.txt" "t9.txt" "t16.txt" "t17.txt" "t18.txt" "real_test.dat")
+declare -a highDimensionTest=("t10.txt" "t11.txt" "t12.txt" "t13.txt" "t14.txt" "t15.txt" "t23.txt" "t24.txt" "t25.txt" "t26.txt")
+declare -a periodicTest=("t1.txt" "t2.txt" "t3.txt" "t20.txt" "t21.txt" "t22.txt" "real_test.dat")
+declare -a tempFiles=("./kdsol.txt" "./vpsol.txt" "./quadsol1.txt" "./quadsol1_verbose.txt" "./quadsol2.txt" "./boxsol.txt" "./trivialsol.txt" "./trivialsol_verbose.txt" "vpsol_verbose.txt")
+
+function removeFiles(){
+	fs=("$@")
+	for file in "${fs[@]}"; do
+		touch $file
+		rm $file
+	done
+}
+
+function displayResults(){
+	if test $i -eq $t
+	then
+		echo "${green}=============================================${reset}"
+		echo "${green}$i/$t TESTS PASSED! SUCCESS!${reset}"
+		echo "${green}=============================================${reset}"
+	else
+		echo "${red}=============================================${reset}"
+		echo "${red}JUST $i/$t TESTS PASSED!${reset}"
+		echo "${red}=============================================${reset}"
+	fi
+}
+
+function raiseInvalidTest(){
+	echo "${purple}TEST CASE $1 IS INVALID!${reset}"
+}
+
+function raiseTestError(){
+	echo "${red}ERROR in test $1: $2 and $3 differ${reset}"
+}
+
+function passTest(){
+	echo "${green}TEST $1 PASSED!${reset}"
+	((i=i+1))
+}
+
+function flatRun(){
+	./$1 $2 -in silent -out flat > $3
+}
+
+function verboseRun(){
+	./$1 $2 -in silent -out verbose | egrep  '\[(.)*\[' | sort > tmp.txt 
+	perl -lape '$_ = qq/@{[sort @F]}/' tmp.txt > $3
+	rm tmp.txt
+}
+
+function testD1(){
+	echo "${reset}Testing case d=1"
+	for file in "${lineTest[@]}"; do
+		if test -r "$prefix$2$file"
+		then
+		  	$1 ./vptree/d-mnn "$prefix$2$file" vpsol.txt
+			$1 ./kdtree/d-mnn "$prefix$2$file" kdsol.txt
+			$1 ./trivial/1-mnn "$prefix$2$file" trivialsol.txt
+
+			t1=`cmp ./vpsol.txt ./kdsol.txt`
+			t2=`cmp ./trivialsol.txt ./kdsol.txt`
+			t3=`cmp ./trivialsol.txt ./vpsol.txt`
+
+			if test -n "$t1"
+			then
+				raiseTestError $2$file vptree kdtree
+
+			elif test -n "$t2"
+			then
+				raiseTestError $2$file trivial kdtree
+
+			elif test -n "$t3"
+			then
+				raiseTestError $2$file trivial vptree
+			else
+				passTest $2$file
+			fi
+			((t=t+1))
+		else
+			raiseInvalidTest $prefix$2$file
+		fi
+	done
+	removeFiles "${tempFiles[@]}"
+	echo "";
+}
+
+function testD2(){
+	echo "${reset}Testing case d=2"
+	for file in "${squareTest[@]}"; do
+		if test -r "$prefix$2$file"
+		then
+		  	$1 ./vptree/d-mnn "$prefix$2$file" vpsol.txt
+			$1 ./kdtree/d-mnn "$prefix$2$file" kdsol.txt
+			$1 ./trivial/d-mnn "$prefix$2$file" trivialsol.txt
+
+			t1=`cmp ./vpsol.txt ./kdsol.txt`
+			t2=`cmp ./trivialsol.txt ./kdsol.txt`
+			t3=`cmp ./trivialsol.txt ./vpsol.txt`
+
+
+			if test -n "$t1"
+			then
+				raiseTestError $2$file vptree kdtree
+			elif test -n "$t2"
+			then
+				raiseTestError $2$file trivial kdtree
+			elif test -n "$t3"
+			then
+				raiseTestError $2$file trivial vptree
+			else
+				passTest $2$file
+			fi
+			((t=t+1))
+		else
+			raiseInvalidTest $prefix$2$file
+		fi
+	done
+	removeFiles "${tempFiles[@]}"
+	echo "";
+}
+
+function testDLessThan6(){
+	echo "${reset}Testing generic d < 6"
+	for file in "${genericTest[@]}"; do
+		if test -r "$prefix$2$file"
+		then	
+			$1 ./kdtree/d-mnn "$prefix$2$file" kdsol.txt
+			$1 ./trivial/d-mnn "$prefix$2$file" trivialsol.txt
+			$1 ./vptree/d-mnn "$prefix$2$file" vpsol.txt
+
+			t1=`cmp ./vpsol.txt ./kdsol.txt`
+			t2=`cmp ./trivialsol.txt ./kdsol.txt`
+			t3=`cmp ./trivialsol.txt ./vpsol.txt`
+
+			if test -n "$t1"
+			then
+				raiseTestError $2$file vptree kdtree
+
+			elif test -n "$t2"
+			then
+				raiseTestError $2$file trivial kdtree
+
+			elif test -n "$t3"
+			then
+				raiseTestError $2$file trivial vptree
+			else
+				passTest $2$file
+			fi
+			((t=t+1))
+		else
+			raiseInvalidTest $prefix$2$file
+		fi
+	done
+	removeFiles "${tempFiles[@]}"
+	echo "";
+}
+
+function testDGreaterThan6(){
+	echo "${reset}Testing genric d | 6 <= d < 1000"
+	for file in "${highDimensionTest[@]}"; do
+		if test -r "$prefix$2$file"
+		then
+		  	$1 ./vptree/d-mnn "$prefix$2$file" vpsol.txt
+			$1 ./kdtree/d-mnn "$prefix$2$file" kdsol.txt
+			$1 ./trivial/d-mnn "$prefix$2$file" trivialsol.txt
+			
+			t1=`cmp ./vpsol.txt ./kdsol.txt`
+			t2=`cmp ./trivialsol.txt ./kdsol.txt`
+			t3=`cmp ./trivialsol.txt ./vpsol.txt`
+
+			if test -n "$t1"
+			then
+				raiseTestError $2$file vptree kdtree
+
+			elif test -n "$t2"
+			then
+				raiseTestError $2$file trivial kdtree
+
+			elif test -n "$t3"
+			then
+				raiseTestError $2$file trivial vptree
+			else
+				passTest $2$file
+			fi
+			((t=t+1))
+		else
+			raiseInvalidTest $prefix$2$file
+		fi
+	done
+	removeFiles "${tempFiles[@]}"
+	echo "";
+}
+
+function testPeriodicBoundaries(){
+	echo "${reset}Testing generic d with periodic boundaries"
+	for file in "${periodicTest[@]}"; do
+		if test -r "$prefix$2$file"
+		then
+		  	$1 ./vptree/periodic-d-mnn "$prefix$2$file" vpsol.txt
+			$1 ./kdtree/periodic-d-mnn "$prefix$2$file" kdsol.txt
+			$1 ./trivial/periodic-d-mnn "$prefix$2$file" trivialsol.txt
+
+			t1=`cmp ./vpsol.txt ./kdsol.txt`
+			t2=`cmp ./trivialsol.txt ./kdsol.txt`
+			t3=`cmp ./trivialsol.txt ./vpsol.txt`
+
+			if test -n "$t1"
+			then
+				raiseTestError $2$file vptree kdtree
+
+			elif test -n "$t2"
+			then
+				raiseTestError $2$file trivial kdtree
+
+			elif test -n "$t3"
+			then
+				raiseTestError $2$file trivial vptree
+			else
+				passTest $2$file
+			fi
+			((t=t+1))
+		else
+			raiseInvalidTest $prefix$2$file
+		fi
+	done
+	removeFiles "${tempFiles[@]}"
+	echo "";echo ""
+}
+
+removeFiles "${tempFiles[@]}"
+echo "Testing single neighbour:"
+testD1 flatRun $prefixSingleNeighbour
+testD2 flatRun $prefixSingleNeighbour
+testDLessThan6 flatRun $prefixSingleNeighbour
+testDGreaterThan6 flatRun $prefixSingleNeighbour
+testPeriodicBoundaries flatRun $prefixSingleNeighbour
+
+removeFiles "${tempFiles[@]}"
+echo "Testing multiple neighbors:"
+testD1 verboseRun $prefixMultiNeighbors
+testD2 verboseRun $prefixMultiNeighbors REDUCED
+testDLessThan6 verboseRun $prefixMultiNeighbors
+testDGreaterThan6 verboseRun $prefixMultiNeighbors
+testPeriodicBoundaries verboseRun $prefixMultiNeighbors
+
+displayResults

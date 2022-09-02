@@ -1,0 +1,5 @@
+all :
+	gcc -g -O0 d-mnn.c ../utilities/sorter.c ../utilities/keyValueRecord.c ../utilities/recordSorter.c ../utilities/entropyCalculator.c ../utilities/neighborsSorter.c ../utilities/timeTaker.c ../utilities/timePrinter.c ../utilities/pointsStatisticsCalculator.c  ../utilities/comparator.c ../utilities/statisticsCalculator.c ../utilities/maxHeap.c ../utilities/selector.c ../utilities/distanceCalculator.c ../utilities/pointsPrinter.c ../utilities/pointsGenerator.c ../utilities/inputTaker.c -lm -o 'd-mnn'
+	gcc -g -O0 periodic-d-mnn.c ../utilities/sorter.c ../utilities/keyValueRecord.c ../utilities/recordSorter.c ../utilities/entropyCalculator.c ../utilities/neighborsSorter.c ../utilities/timeTaker.c ../utilities/timePrinter.c ../utilities/pointsStatisticsCalculator.c  ../utilities/comparator.c ../utilities/statisticsCalculator.c ../utilities/maxHeap.c ../utilities/selector.c ../utilities/distanceCalculator.c ../utilities/pointsPrinter.c ../utilities/pointsGenerator.c ../utilities/inputTaker.c -lm -o 'periodic-d-mnn'
+
+
