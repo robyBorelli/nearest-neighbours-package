@@ -54,7 +54,7 @@ If you are using *bash* you can test that everything works by simply running:
 ### 4. Run<a name="run"></a>
 The syntax to run every executables is:
 ```
-<executable> <yourInputFile> [-out <outputMode>] [-in <inputMode>] [-entropy] [-sorted] 
+<executable> <yourInputFile> [-out <outputMode>] [-in <inputMode>] [-entropy] [-sort] 
 ```
 
 ### 4.1 Options format <a name="opt"></a>
@@ -69,7 +69,7 @@ The syntax to run every executables is:
  - `silent`: the program doesn't print the points read from the input file.
 
 
- With the option `-sorted` the neighbors are sorted by increasing distances for each point.
+ With the option `-sort` the neighbors are sorted by increasing distances for each point.
  With the option `-entropy` the program prints the entropy in the specified space with periodic conditions. If `-entropy` is specified in a executable that doesn't support this kind of spaces, an exception will be raised.
 
 
@@ -80,7 +80,7 @@ By default the both the `<outputMode>` and the `<inputMode>` are set to verbose.
 
 **Example 1**: 
 ```
-vptree/d-mnn test/basic-tests/input1.txt -in silent -out verbose -sorted
+vptree/d-mnn test/basic-tests/input1.txt -in silent -out verbose -sort
 ```
 Runs the VP tree algorithm with the input file *test/basic-tests/input1.txt*. It doesn't print the read points, but it prints the neighbors sorted by distance. 
 
@@ -114,14 +114,14 @@ Some examples could be found in the `test/basic-tests` directory.
 ### 5. Summary of run-time complexities <a name="complx"></a>
 The run-time complexities are summarized in the table below.
 
-| **Algorithm**          | **Expected Time**       | **Worst Case**          | Constraints |   |
-|------------------------|-------------------------|-------------------------|-------------|---|
-| trivial/1-mnn          | $\Theta(n \log n + nm)$ | $\Theta(n \log n + nm)$ | *d=1*       |   |
-| trivial/d-mnn          | $\Theta(dn^2)$          | $\Theta(dn^2)$          |             |   |
-| trivial/periodic-d-mnn | $\Theta(dn^2)$          | $\Theta(dn^2)$          |             |   |
-| vptree/d-mnn           | $O(dn \log n)$          | $O(dn^2 \log m)$        |             |   |
-| vptree/periodic-d-mnn  | $O(dn \log n)$          | $O(dn^2 \log m)$        |             |   |
-| kdtree/d-mnn           | $O(dn \log n)$          | $O(dn^2 \log m)$        |             |   |
-| kdtree/periodic-d-mnn  | $O(n3^d \log(n3^d))$    | Not calculated          |             |   |
+| **Algorithm**          | **Expected Time**       | **Worst Case**          | Constraints |
+|------------------------|-------------------------|-------------------------|-------------|
+| trivial/1-mnn          | $\Theta(n \log n + nm)$ | $\Theta(n \log n + nm)$ | *d=1*       |
+| trivial/d-mnn          | $\Theta(dn^2)$          | $\Theta(dn^2)$          |             |
+| trivial/periodic-d-mnn | $\Theta(dn^2)$          | $\Theta(dn^2)$          |             |
+| vptree/d-mnn           | $O(dn \log n)$          | $O(dn^2 \log m)$        |             |
+| vptree/periodic-d-mnn  | $O(dn \log n)$          | $O(dn^2 \log m)$        |             |
+| kdtree/d-mnn           | $O(dn \log n)$          | $O(dn^2 \log m)$        |             |
+| kdtree/periodic-d-mnn  | $O(n3^d \log(n3^d))$    | Not calculated          |             |
 
-Note that with options `-sorted` or `-entropy`, it is taken an additional time of $\Theta(n m (d + \log m))$.
+Note that with options `-sort` or `-entropy`, it is taken an additional time of $\Theta(n m (d + \log m))$.
