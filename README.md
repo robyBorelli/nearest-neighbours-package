@@ -19,7 +19,7 @@ The notation we use is the following:
 - *n* number of input points
 - *m* size of the neighborhood
 
-Reference:
+Reference:<br>
 Borelli R, Dovier A, Fogolari F. Data Structures and Algorithms for k-th Nearest Neighbours Conformational Entropy Estimation. Biophysica. 2022; 2(4):340-352. https://doi.org/10.3390/biophysica2040031
 
 ### 2. Algorithms included <a name="algo"></a>
