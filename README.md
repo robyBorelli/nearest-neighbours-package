@@ -19,6 +19,9 @@ The notation we use is the following:
 - *n* number of input points
 - *m* size of the neighborhood
 
+Reference:
+Borelli R, Dovier A, Fogolari F. Data Structures and Algorithms for k-th Nearest Neighbours Conformational Entropy Estimation. Biophysica. 2022; 2(4):340-352. https://doi.org/10.3390/biophysica2040031
+
 ### 2. Algorithms included <a name="algo"></a>
 We include different algorithms to solve the all-*m*-nn problem with different properties and runtime complexities (see [Summary of run-time complexities](#complx)):
 - *trivial/*
@@ -114,14 +117,14 @@ Some examples could be found in the `test/basic-tests` directory.
 ### 5. Summary of run-time complexities <a name="complx"></a>
 The run-time complexities are summarized in the table below.
 
-| **Algorithm**          | **Expected Time**       | **Worst Case**          | Constraints |
-|------------------------|-------------------------|-------------------------|-------------|
-| trivial/1-mnn          | $\Theta(n \log n + nm)$ | $\Theta(n \log n + nm)$ | *d=1*       |
-| trivial/d-mnn          | $\Theta(dn^2)$          | $\Theta(dn^2)$          |             |
-| trivial/periodic-d-mnn | $\Theta(dn^2)$          | $\Theta(dn^2)$          |             |
-| vptree/d-mnn           | $O(dn \log n)$          | $O(dn^2 \log m)$        |             |
-| vptree/periodic-d-mnn  | $O(dn \log n)$          | $O(dn^2 \log m)$        |             |
-| kdtree/d-mnn           | $O(dn \log n)$          | $O(dn^2 \log m)$        |             |
-| kdtree/periodic-d-mnn  | $O(n3^d \log(n3^d))$    | Not calculated          |             |
+| **Algorithm**          | **Expected Time**       | **Worst Case**            | Constraints |
+|------------------------|-------------------------|---------------------------|-------------|
+| trivial/1-mnn          | $\Theta(n \log n + nm)$ | $\Theta(n \log n + nm)$   | *d=1*       |
+| trivial/d-mnn          | $\Theta(dn^2)$          | $\Theta(dn^2)$            |             |
+| trivial/periodic-d-mnn | $\Theta(dn^2)$          | $\Theta(dn^2)$            |             |
+| vptree/d-mnn           | $O(dn \log n)$          | $O(dn^2 \log m)$          |             |
+| vptree/periodic-d-mnn  | $O(dn \log n)$          | $O(dn^2 \log m)$          |             |
+| kdtree/d-mnn           | $O(dn \log n)$          | $O(dn^2 \log m)$          |             |
+| kdtree/periodic-d-mnn  | $O(n3^d \log(n3^d))$    | $\Omega(n3^d \log(n3^d))$ |             |
 
-Note that with options `-sort` or `-entropy`, it is taken an additional time of $\Theta(n m (d + \log m))$.
+Note that with options `-sort` or `-entropy`, an additional time of $\Theta(n m (d + \log m))$ is required.
