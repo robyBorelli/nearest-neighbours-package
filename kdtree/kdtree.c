@@ -1,4 +1,9 @@
 node *makeTerminal(float **points, int nPoints){
+    #ifdef DEBUG_ON
+        printf("\nLEAF (n:%d) ", nPoints);
+        printPoints(points,nPoints,d,',');
+        printf("\n");
+    #endif
     node* r = (node *)malloc(sizeof(node));
     r->isLeaf = TRUE;
     r->leftSon = NULL;
@@ -40,7 +45,9 @@ void destroyKdTree(node *r){
 
 node *buildKdTree(float **points, int nPoints){
     if(points == NULL) return NULL;
-    if(nPoints <= b){return makeTerminal(points, nPoints);}
+    if(nPoints <= b){
+        return makeTerminal(points, nPoints);
+    }
 
     int discriminator = 0;
     float maxSpread = 0, partitionValue = 0;
@@ -72,7 +79,6 @@ node *buildKdTree(float **points, int nPoints){
         }
     }
 
-
     if(nLeft == 0 || nRight == 0){
         //assert(nLeft != 0 && nRight != 0);
 
@@ -91,11 +97,23 @@ node *buildKdTree(float **points, int nPoints){
         return makeTerminal(points, nPoints);
     }
 
+
+    #ifdef DEBUG_ON
+        printf("\nINTERNAL (n:%d, disc:%d, pv:%f) ", nPoints,discriminator,partitionValue);
+        printPoints(points,nPoints,d,',');
+        printf(" -->left: (n:%d) ", nLeft);
+        printPoints(leftPoints,nLeft,d,',');
+        printf(" -->right: (n:%d) ", nRight);
+        printPoints(rightPoints,nRight,d,',');
+        printf("\n");
+    #endif    
+
     for(int i = 0; i < nPoints; i++){
         free(points[i]);
         points[i] = NULL;
     }
     free(points); points = NULL;
+
 
     return makeNonTerminal(discriminator,
                            partitionValue,

@@ -1,3 +1,6 @@
+// define DEBUG_ON constant to see additional output while the kdtree is built
+// #define DEBUG_ON
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>

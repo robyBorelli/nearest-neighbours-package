@@ -1,4 +1,9 @@
 node *makeTerminal(float **points, int nPoints){
+    #ifdef DEBUG_ON
+        printf("\nLEAF (n:%d) ", nPoints);
+        printPoints(points,nPoints,d,',');
+        printf("\n");
+    #endif
     node* r = (node *)malloc(sizeof(node));
     r->isLeaf = TRUE;
     r->leftSon = NULL;
@@ -64,6 +69,18 @@ node *buildVpTree(float **points, int nPoints){
             nRight++;
         }
     }
+
+    #ifdef DEBUG_ON
+        printf("\nINTERNAL (n:%d, radius:%f, ", nPoints,radius);
+        printPoint(vp,d);
+        printf(") ");
+        printPoints(points,nPoints,d,',');
+        printf(" -->left: (n:%d) ", nLeft);
+        printPoints(leftPoints,nLeft,d,',');
+        printf(" -->right: (n:%d) ", nRight);
+        printPoints(rightPoints,nRight,d,',');
+        printf("\n");
+    #endif  
 
     if(nLeft == 0 || nRight == 0){
         //assert(nLeft != 0 && nRight != 0);
